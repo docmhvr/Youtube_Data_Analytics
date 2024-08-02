@@ -1,0 +1,5 @@
+Trending YouTube Video Statistics
+
+Daily statistics for trending YouTube videos
+
+https://www.kaggle.com/datasets/datasnaek/youtube-new/data
