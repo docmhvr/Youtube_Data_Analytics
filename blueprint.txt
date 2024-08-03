@@ -1,0 +1,70 @@
+1. setup project
+    a. Project directory
+    b. Venv
+    c. Github version control
+    d. README and LICENSE
+2. Setup AWS
+    a. Create IAM role (Lease privilege principle)
+    b. Setup AWS CLI ( access key and secret key of new IAM admin user)
+    c. Create S3 bucket from console
+3. Data
+    a. Download raw data from Kaggle Youtube dataset -> Youtube API crawler
+    (https://www.kaggle.com/datasets/datasnaek/youtube-new/data) (https://github.com/mitchelljy/Trending-YouTube-Scraper)
+    b. Upload raw data from local dir to S3 bucket. (bucket name: youtube-data-raw-uswest1-dev )
+    ( 
+    commands to copy files in local to AWS S3 using command prompt
+    
+        aws s3 cp . s3://youtube-data-raw-uswest1-dev/youtube/raw_statistics_reference_data/ --recursive --exclude "*" --include "*.json"
+
+        aws s3 cp CAvideos.csv s3://youtube-data-raw-uswest1-dev/youtube/raw_statistics/region=ca/
+        aws s3 cp DEvideos.csv s3://youtube-data-raw-uswest1-dev/youtube/raw_statistics/region=de/
+        aws s3 cp FRvideos.csv s3://youtube-data-raw-uswest1-dev/youtube/raw_statistics/region=fr/
+        aws s3 cp GBvideos.csv s3://youtube-data-raw-uswest1-dev/youtube/raw_statistics/region=gb/
+        aws s3 cp INvideos.csv s3://youtube-data-raw-uswest1-dev/youtube/raw_statistics/region=in/
+        aws s3 cp JPvideos.csv s3://youtube-data-raw-uswest1-dev/youtube/raw_statistics/region=jp/
+        aws s3 cp KRvideos.csv s3://youtube-data-raw-uswest1-dev/youtube/raw_statistics/region=kr/
+        aws s3 cp MXvideos.csv s3://youtube-data-raw-uswest1-dev/youtube/raw_statistics/region=mx/
+        aws s3 cp RUvideos.csv s3://youtube-data-raw-uswest1-dev/youtube/raw_statistics/region=ru/
+        aws s3 cp USvideos.csv s3://youtube-data-raw-uswest1-dev/youtube/raw_statistics/region=us/
+    )
+    c. Create AWS Glue Crawler and give S3 access, also create Glue Service role with permissions (S3access, Glueservice)
+    d. Run crawler, it creates table in Database (set output S3 bucket for Glue Crawler
+        Database name: youtube-data-raw-uswest1-athena-output
+        OutputS3 bckt: youtube-data-raw    
+    )
+    e. Data needs to be correctly formatted, needs preprocessing for Glue Crawler. 
+    ( 
+    JSON SerDe Libraries: Github Hive (All key, values data in one line) 
+        We have to convert Json to Parquet format using AWS Lambda, AWS Data wrangler, ...
+    )
+    f. AWS Lambda function to clean the data and store it back to clean databse and s3 bucket (name: youtube-data-uswest1-raw-json-to-parquet)
+        * Create Lmabda function and new lambda service role with permissions. (S3access, Glueservice)
+        * Add env variables to lambda for new database, table and bucket (cleaned varsion)
+        * Increase lambda execution time and add layer for dependencies (AWS pandas, data wrangler)
+        * Create respective bucket and database in S3 and Glue catalog
+        * Test lambda with test config. (region consistency, bucket name and key as /youtube/arn resource for file in raw bucket)
+4. Data (part-2)
+    a. Create AWS Glue crawler for csv's in raw_statistics_reference_data folder
+    b. Change lambda configurations for successful run and run lambda: (S3 raw to glue catalog table done to adjust to format of data items keys extracted)
+        * role: Add permission of glue service role along with S3 access
+        * layer: Add layer of PyPandas to support dependencies of aws wrangler, dataframes and others 
+        * time: Increase lambda execution time from 3sec to 3 min or as needed based on size of data
+        * test configurations: test the lambda function with s3 template and correct bucket name and key name
+    c. Next step is to create cleaned data and apply tansformations to remove nulls and change dtypes 
+5. ETL
+    a. Create glue etl job to extract data from raw S3 and transform data, apply mapping and sink into clean S3 bucket version
+        * implement etl pyspark script to do the extract, transform and load operation
+        * Add partition key as regions in the sink code 
+        * Add predicate pushdown for regions: ca, gb, us to avoid error in text of different format (can use utf-8 or other encoding to get all data in practice)
+        * Run ETL job to get the cleaned S3 bucket and run Glue crawler to create clean catalog database and table 
+    b. Trigger S3-Lambda
+        *. Add trigger to lanbda function for input files on Raw S3 bucket
+        *. Test the trigger by uploading the data again (delete and redo to test)
+    c. Joining the raw statistics with raw_statistics_reference_data on category id and id (final output data for visualisation, done using Glue etl job)
+        * Create ETL job to join clean catalogs of raw raw_statistics and raw_statistics_reference_data (Inner join)
+        * Glue studio for creating job, sources as Glue catalogs, with inner join transform and target as S3 bucket (new bucket: youtube-data-analytics-uswest1-dev)
+        * Also create a output Glue catalog with etl job for analytics.(partitioning on region and category)
+        * Finally got the analytics database to do visualisation with Quicksight.(new databse created with etl: youtube-data-analytics)
+7. Reporting and Visualisation
+    a. Quicksight (Athena connection and access table analytics_youtube)(Note: QS not available in us-west-1)
+    b. Tableau (Query all data from analytics_youtube table and download csv)
