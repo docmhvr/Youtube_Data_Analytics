@@ -58,8 +58,9 @@
         * Add predicate pushdown for regions: ca, gb, us to avoid error in text of different format (can use utf-8 or other encoding to get all data in practice)
         * Run ETL job to get the cleaned S3 bucket and run Glue crawler to create clean catalog database and table 
     b. Trigger S3-Lambda
-        *. Add trigger to lanbda function for input files on Raw S3 bucket
-        *. Test the trigger by uploading the data again (delete and redo to test)
+        * Add trigger to lanbda function for input files on Raw S3 bucket
+        * Test the trigger by uploading the data again (delete and redo to test)
+        * Create a cloudwatch log group for lambda and execute lambda by triggering event using S3 upload
     c. Joining the raw statistics with raw_statistics_reference_data on category id and id (final output data for visualisation, done using Glue etl job)
         * Create ETL job to join clean catalogs of raw raw_statistics and raw_statistics_reference_data (Inner join)
         * Glue studio for creating job, sources as Glue catalogs, with inner join transform and target as S3 bucket (new bucket: youtube-data-analytics-uswest1-dev)
@@ -68,3 +69,4 @@
 7. Reporting and Visualisation
     a. Quicksight (Athena connection and access table analytics_youtube)(Note: QS not available in us-west-1)
     b. Tableau (Query all data from analytics_youtube table and download csv)
+8. Documentation, screenshots and publish visualisation on Tableau public
