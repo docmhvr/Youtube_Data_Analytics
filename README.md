@@ -61,7 +61,7 @@ An S3 bucket was created from the AWS console for storing raw data.
 
 ### Screenshot:
 
-![AWS Setup](images/aws_setup.png)
+![S3 buckets](images/S3_buckets.png)
 
 ## Data Processing
 
@@ -80,14 +80,7 @@ Raw data was uploaded from the local directory to the S3 bucket.
 aws s3 cp . s3://youtube-data-raw-uswest1-dev/youtube/raw_statistics_reference_data/ --recursive --exclude "*" --include "*.json"
 
 aws s3 cp CAvideos.csv s3://youtube-data-raw-uswest1-dev/youtube/raw_statistics/region=ca/
-aws s3 cp DEvideos.csv s3://youtube-data-raw-uswest1-dev/youtube/raw_statistics/region=de/
-aws s3 cp FRvideos.csv s3://youtube-data-raw-uswest1-dev/youtube/raw_statistics/region=fr/
 aws s3 cp GBvideos.csv s3://youtube-data-raw-uswest1-dev/youtube/raw_statistics/region=gb/
-aws s3 cp INvideos.csv s3://youtube-data-raw-uswest1-dev/youtube/raw_statistics/region=in/
-aws s3 cp JPvideos.csv s3://youtube-data-raw-uswest1-dev/youtube/raw_statistics/region=jp/
-aws s3 cp KRvideos.csv s3://youtube-data-raw-uswest1-dev/youtube/raw_statistics/region=kr/
-aws s3 cp MXvideos.csv s3://youtube-data-raw-uswest1-dev/youtube/raw_statistics/region=mx/
-aws s3 cp RUvideos.csv s3://youtube-data-raw-uswest1-dev/youtube/raw_statistics/region=ru/
 aws s3 cp USvideos.csv s3://youtube-data-raw-uswest1-dev/youtube/raw_statistics/region=us/
 ```
 
@@ -136,6 +129,7 @@ A Glue ETL job was created to extract data from the raw S3 bucket, transform it,
 ### Screenshot:
 
 ![Glue ETL Job](images/glue_etl_job.png)
+![Glue ETL Job](images/etl_job_run.png)
 
 ### b. Trigger S3-Lambda
 
@@ -152,17 +146,25 @@ An ETL job was created to join the clean catalogs of `raw_statistics` and `raw_s
 
 ![Data Joining](images/data_joining.png)
 
+### Screenshot:
+
+Final output of Analytics/Reporting bucket
+
+![Data Joining](images/S3_bucket_analytics.png)
+![Data Joining](images/S3_bucket_analytics_2.png)
+
+Final output tables and databases in AWS Glue Catalog
+
+![Data Joining](images/databases.png)
+![Data Joining](images/tables.png)
+
 ## Reporting and Visualization
 
-### a. Quicksight
+### Tableau
 
-A Quicksight dashboard was created with an Athena connection to the `analytics_youtube` table.
+All data from the `analytics_youtube` table was queried, downloaded as a CSV, and visualized in Tableau. Final csv in data folder in this repository.
 
-### b. Tableau
-
-All data from the `analytics_youtube` table was queried, downloaded as a CSV, and visualized in Tableau.
-
-- [Tableau Public Dashboard](https://public.tableau.com/views/YoutubeDataAnalytics/)
+- [Tableau Public Dashboard](https://public.tableau.com/views/)
 
 ### Screenshot:
 
