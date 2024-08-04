@@ -1,6 +1,6 @@
 # Youtube Data Analytics
 
-This repository contains the code and documentation for a project that performs data analytics on Youtube analytics data. The project involves setting up a data pipeline using AWS services to process, transform, and visualize Trending YouTube Video Statistics data. Data is sourced from the Kaggle dataset, "Trending YouTube Video Statistics," collected using the Trending YouTube Video Scraper that scrapes the most relevant information from videos that are currently trending on YouTube in a specified set of countries.
+This repository contains the code and documentation for a project that performs data analytics on Youtube analytics data. The project involves setting up a data pipeline using AWS services to process, transform, and visualize Trending YouTube Video Statistics data. Data is sourced from the Kaggle dataset, [Trending YouTube Video Statistics](https://www.kaggle.com/datasets/datasnaek/youtube-new/data), collected using the Trending YouTube Video Scraper that scrapes the most relevant information from videos that are currently trending on YouTube in a specified set of countries.
 
 ## Features
 
@@ -164,7 +164,7 @@ Final output tables and databases in AWS Glue Catalog
 
 All data from the `analytics_youtube` table was queried, downloaded as a CSV, and visualized in Tableau. Final csv in data folder in this repository.
 
-- [Tableau Public Dashboard](https://public.tableau.com/views/)
+- [Tableau Public Dashboard](https://public.tableau.com/app/profile/mahavir.chandaliya/viz/YoutubeDataAnalytics_17227358174200/YoutubeAnalytics)
 
 ### Screenshot:
 
